@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: nodejs-hw
+    runtime: node
+    branch: 01-express
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
