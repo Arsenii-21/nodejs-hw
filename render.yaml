@@ -2,10 +2,12 @@ services:
   - type: web
     name: nodejs-hw
     runtime: node
-    branch: 01-express
+    branch: 02-mongodb
     plan: free
     buildCommand: npm ci
     startCommand: npm start
     envVars:
+      - key: MONGO_URL
+        sync: false
       - key: NODE_ENV
         value: production
