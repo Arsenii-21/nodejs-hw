@@ -24,9 +24,21 @@ const router = Router();
 router.use('/notes', authenticate);
 
 router.get('/notes', celebrate(getAllNotesSchema), asyncHandler(getAllNotes));
-router.get('/notes/:noteId', celebrate(noteIdSchema), asyncHandler(getNoteById));
+router.get(
+  '/notes/:noteId',
+  celebrate(noteIdSchema),
+  asyncHandler(getNoteById),
+);
 router.post('/notes', celebrate(createNoteSchema), asyncHandler(createNote));
-router.patch('/notes/:noteId', celebrate(updateNoteSchema), asyncHandler(updateNote));
-router.delete('/notes/:noteId', celebrate(noteIdSchema), asyncHandler(deleteNote));
+router.patch(
+  '/notes/:noteId',
+  celebrate(updateNoteSchema),
+  asyncHandler(updateNote),
+);
+router.delete(
+  '/notes/:noteId',
+  celebrate(noteIdSchema),
+  asyncHandler(deleteNote),
+);
 
 export default router;

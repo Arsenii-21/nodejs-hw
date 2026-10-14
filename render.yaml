@@ -2,12 +2,32 @@ services:
   - type: web
     name: nodejs-hw
     runtime: node
-    branch: 04-auth
+    branch: 05-mail-and-img
     plan: free
     buildCommand: npm ci
     startCommand: npm start
     envVars:
       - key: MONGO_URL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: FRONTEND_DOMAIN
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
         sync: false
       - key: NODE_ENV
         value: production

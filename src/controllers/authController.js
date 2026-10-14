@@ -1,5 +1,9 @@
 import bcrypt from 'bcrypt';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import Handlebars from 'handlebars';
 import createHttpError from 'http-errors';
+import jwt from 'jsonwebtoken';
 import { isValidObjectId } from 'mongoose';
 
 import { Session } from '../models/session.js';
@@ -9,6 +13,7 @@ import {
   createSession,
   setSessionCookies,
 } from '../services/auth.js';
+import { sendEmail } from '../utils/sendMail.js';
 
 export const registerUser = async (req, res) => {
   if (await User.exists({ email: req.body.email })) {
@@ -78,4 +83,63 @@ export const logoutUser = async (req, res) => {
 
   clearSessionCookies(res);
   res.status(204).end();
+};
+
+export const requestResetEmail = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  const successResponse = { message: 'Password reset email sent successfully' };
+
+  if (!user) {
+    return res.status(200).json(successResponse);
+  }
+
+  const token = jwt.sign({ sub: user._id, email }, process.env.JWT_SECRET, {
+    expiresIn: '15m',
+  });
+
+  const templatePath = path.resolve('src/templates/reset-password-email.html');
+  const template = Handlebars.compile(await fs.readFile(templatePath, 'utf-8'));
+  const html = template({
+    name: user.username,
+    link: `${process.env.FRONTEND_DOMAIN}/reset-password?token=${token}`,
+  });
+
+  try {
+    await sendEmail({
+      to: email,
+      subject: 'Reset your password',
+      html,
+    });
+  } catch {
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
+
+  res.status(200).json(successResponse);
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+  let payload;
+
+  try {
+    payload = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    throw createHttpError(401, 'Invalid or expired token');
+  }
+
+  const user = await User.findOne({ _id: payload.sub, email: payload.email });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  user.password = await bcrypt.hash(password, 10);
+  await user.save();
+  await Session.deleteMany({ userId: user._id });
+
+  res.status(200).json({ message: 'Password reset successfully' });
 };
