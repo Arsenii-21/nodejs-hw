@@ -2,7 +2,7 @@ services:
   - type: web
     name: nodejs-hw
     runtime: node
-    branch: 03-validation
+    branch: 04-auth
     plan: free
     buildCommand: npm ci
     startCommand: npm start
