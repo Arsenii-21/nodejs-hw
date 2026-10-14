@@ -1,5 +1,6 @@
 import 'dotenv/config';
 
+import { errors as celebrateErrors } from 'celebrate';
 import cors from 'cors';
 import express from 'express';
 
@@ -19,6 +20,7 @@ app.use(cors());
 app.use(notesRoutes);
 
 app.use(notFoundHandler);
+app.use(celebrateErrors());
 app.use(errorHandler);
 
 await connectMongoDB();

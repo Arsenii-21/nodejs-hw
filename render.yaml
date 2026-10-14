@@ -2,7 +2,7 @@ services:
   - type: web
     name: nodejs-hw
     runtime: node
-    branch: 02-mongodb
+    branch: 03-validation
     plan: free
     buildCommand: npm ci
     startCommand: npm start
