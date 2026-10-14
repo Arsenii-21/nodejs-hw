@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { celebrate } from 'celebrate';
 
 import {
   createNote,
@@ -19,10 +20,10 @@ const asyncHandler = (fn) => (req, res, next) =>
 
 const router = Router();
 
-router.get('/notes', getAllNotesSchema, asyncHandler(getAllNotes));
-router.get('/notes/:noteId', noteIdSchema, asyncHandler(getNoteById));
-router.post('/notes', createNoteSchema, asyncHandler(createNote));
-router.patch('/notes/:noteId', updateNoteSchema, asyncHandler(updateNote));
-router.delete('/notes/:noteId', noteIdSchema, asyncHandler(deleteNote));
+router.get('/notes', celebrate(getAllNotesSchema), asyncHandler(getAllNotes));
+router.get('/notes/:noteId', celebrate(noteIdSchema), asyncHandler(getNoteById));
+router.post('/notes', celebrate(createNoteSchema), asyncHandler(createNote));
+router.patch('/notes/:noteId', celebrate(updateNoteSchema), asyncHandler(updateNote));
+router.delete('/notes/:noteId', celebrate(noteIdSchema), asyncHandler(deleteNote));
 
 export default router;
